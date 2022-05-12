@@ -5,4 +5,6 @@ request_logs.txt
 .env
 storage
 .esbuild
+drafts.txt
+drafts.ts
 
