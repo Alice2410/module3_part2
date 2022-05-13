@@ -1,17 +1,13 @@
 import type { AWS } from '@serverless/typescript';
-import { galleryConfig } from './config/serverless/parts/galleryConf/gallery';
+import { galleryConfig } from './config/serverless/parts/galleryConf/gallery'; 
 import { authConfig } from './config/serverless/parts/authConf/auth';
-// import { examplesConfig } from './config/serverless/parts/examples';
-// import { getMediaInfoConfig } from './config/serverless/parts/get-media-info';
-// import { jobsConfig } from './config/serverless/parts/jobs';
-import { restApiCorsConfig } from './config/serverless/parts/rest-api-cors';
-// import { usersConfig } from './config/serverless/parts/users';
 import { joinParts } from './config/serverless/utils';
+import { galleryTableConfig } from './config/serverless/parts/DBConf/table';
 
 
 const CLIENT = '${file(./env.yml):${self:provider.stage}.CLIENT}';
 const SERVICE_NAME = `template-sls`;
-const STAGE = '${opt:stage, "local"}';
+const STAGE = '${opt:stage, "dev"}'; //'${opt:stage, "dev"}';
 const REGION = '${file(./env.yml):${self:provider.stage}.REGION}';
 const PROFILE = '${file(./env.yml):${self:provider.stage}.PROFILE}';
 
@@ -19,7 +15,6 @@ const masterConfig: AWS = {
   service: SERVICE_NAME,
   configValidationMode: 'warn',
   variablesResolutionMode: '20210326',
-  unresolvedVariablesNotificationMode: 'error',
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -71,7 +66,7 @@ const masterConfig: AWS = {
     envFiles: ['env.yml'],
     envEncryptionKeyId: {
       local: '${file(./kms_key.yml):local}',
-      // dev: '${file(./kms_key.yml):dev}',
+      dev: '${file(./kms_key.yml):dev}', 
       // test: '${file(./kms_key.yml):test}',
       // prod: '${file(./kms_key.yml):prod}',
     },
@@ -129,20 +124,13 @@ const masterConfig: AWS = {
   plugins: [
     '@redtea/serverless-env-generator',
     'serverless-esbuild',
-    'serverless-offline-sqs',
     'serverless-offline',
-    // 'serverless-offline-sns',
-    // 'serverless-s3-local',
     'serverless-prune-plugin',
   ],
 };
 
 module.exports = joinParts(masterConfig, [
-  restApiCorsConfig,
-  // getMediaInfoConfig,
-  // jobsConfig,
-  // usersConfig,
-  // examplesConfig,
   authConfig,
-  galleryConfig
+  galleryConfig,
+  galleryTableConfig
 ]);
