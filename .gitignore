@@ -1,10 +1,26 @@
-node_modules
-build
 .DS_Store
-request_logs.txt
-.env
-storage
-.esbuild
 drafts.txt
 drafts.ts
+# package directories
+node_modules/
+offline
+jspm_packages
+.idea/
+.vscode/
+.webpack/
+**/.webpack
+.tmp
+.scannerwork/
 
+# Serverless directories
+.serverless/
+.build/
+.env
+**/.env
+**/api/**.js
+.nyc_output/
+typings/
+documentation/
+coverage/
+.esbuild/
+kms_key.yml
