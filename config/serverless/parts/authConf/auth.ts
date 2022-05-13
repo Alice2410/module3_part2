@@ -1,13 +1,13 @@
 import { AWSPartitial } from '../../types';
-import {signUp, logIn, uploadDefaultUsers, authenticator} from "./index";
+import {signUp, logIn, uploadDefaultUsers, authenticate} from "./index";
 
 export const authConfig: AWSPartitial = {
   provider: {
     httpApi: {
       authorizers: {
-        authenticator: {
+        authenticate: {
           type: "request",
-          functionName: "authenticator",
+          functionName: "authenticate",
           identitySource: "$request.header.Authorization",
           enableSimpleResponses: true,
         }
@@ -15,6 +15,6 @@ export const authConfig: AWSPartitial = {
     }
   },
   functions: {
-    authenticator, signUp, logIn, uploadDefaultUsers
+    authenticate, signUp, logIn, uploadDefaultUsers
   },
 }

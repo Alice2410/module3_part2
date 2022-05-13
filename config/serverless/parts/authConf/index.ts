@@ -43,7 +43,7 @@ export const uploadDefaultUsers = {
   ]
 };
 
-export const authenticator = {
+export const authenticate = {
   handler: "api/auth/handler.authenticate",
   description: "Authenticate user",
   timeout: 6,
