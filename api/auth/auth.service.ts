@@ -1,5 +1,5 @@
 import { UserData } from "./auth.interface";
-import { UserService } from "@models/MongoDB/user-operations";
+import { UserService } from "@models/DynamoDB/user-operations";
 import jwt from "jsonwebtoken";
 import { 
   HttpUnauthorizedError,

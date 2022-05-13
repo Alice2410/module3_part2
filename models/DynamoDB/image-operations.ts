@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from "path";
 import * as config from 'services/config';
-import { Image } from '@models/MongoDB/image';
+import { Image } from '@models/DynamoDB/image';
 import { ObjectId } from "mongodb";
 import { ImageInterface } from 'api/gallery/gallery.inteface';
 import { 
