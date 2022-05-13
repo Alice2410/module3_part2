@@ -9,11 +9,12 @@ import { jwtToken } from './auth.interface';
 import { 
   HttpUnauthorizedError,
 } from '@floteam/errors';
- import { APIGatewayAuthorizerSimpleResult, APIGatewayRequestAuthorizerHttpApiPayloadV2Event } from "@interfaces/api-gateway-authorizer.interface";
+import { APIGatewayAuthorizerSimpleResult, APIGatewayRequestAuthorizerHttpApiPayloadV2Event } from "@interfaces/api-gateway-authorizer.interface";
 
-export const signUp: APIGatewayProxyHandlerV2 = async(event, context) => {
+const manager = new AuthorizationManager();
+
+export const signUp: APIGatewayProxyHandlerV2 = async(event) => {
   try { 
-    const manager = new AuthorizationManager();
     if (!event.body) {
       throw new HttpUnauthorizedError('Нет пользовательских данных')
     } 
@@ -26,10 +27,8 @@ export const signUp: APIGatewayProxyHandlerV2 = async(event, context) => {
   }
 }
 
-export const logIn: APIGatewayProxyHandlerV2 = async (event, context) => {
+export const logIn: APIGatewayProxyHandlerV2 = async (event) => {
   try{
-    const manager = new AuthorizationManager();
-
     if (!event.body) {
       throw new HttpUnauthorizedError('Нет пользовательских данных')
     } 
@@ -42,12 +41,12 @@ export const logIn: APIGatewayProxyHandlerV2 = async (event, context) => {
   }
 }
 
-export const uploadDefaultUsers: APIGatewayProxyHandlerV2 = async (event, context) => {
+export const uploadDefaultUsers: APIGatewayProxyHandlerV2 = async () => {
   console.log('upload');
   
 
   try {
-    const manager = new AuthorizationManager();
+    // const manager = new AuthorizationManager();
     const response = await manager.uploadDefaultUsers();
 
     return createResponse(200, response);
@@ -72,10 +71,10 @@ export function generateSimpleResponse<C extends APIGatewayAuthorizerSimpleResul
 export const authenticate: Handler<
   APIGatewayRequestAuthorizerHttpApiPayloadV2Event,
   APIGatewayAuthorizerSimpleResult
-  > = async (event, context) => {
+  > = async (event) => {
 
   try {
-    const manager = new AuthorizationManager();
+    // const manager = new AuthorizationManager();
     const token = event.identitySource?.[0]
 
     console.log('token', token);

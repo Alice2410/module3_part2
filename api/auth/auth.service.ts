@@ -1,5 +1,4 @@
 import { UserData } from "./auth.interface";
-import { connectToDB } from "@services/connect-to-DB.service";
 import { UserService } from "@models/MongoDB/user-operations";
 import jwt from "jsonwebtoken";
 import { 
@@ -16,7 +15,6 @@ export class AuthorizationService {
 
   async signUp(userData: UserData) {
     try {
-      await connectToDB();
       const newUser = await this.User.addNewUser(userData);
       if (!newUser) {
         throw new AlreadyExistsError('Пользователь существует')
@@ -30,11 +28,9 @@ export class AuthorizationService {
 
   async logIn(userData: UserData) {
     try {
-      await connectToDB();
       const isValid = await this.User.checkUser(userData);
 
       if (isValid) {
-        
         let token = jwt.sign({sub: userData.email}, tokenKey);
 
         return token;
@@ -48,7 +44,6 @@ export class AuthorizationService {
 
   async uploadDefaultUsers () {
     try {
-      await connectToDB();
       let user = await this.User.addNewUser();
       
       return 'Пользователи добавлены';
@@ -59,7 +54,6 @@ export class AuthorizationService {
 
   async authenticate(token: string) {
     try {
-      await connectToDB();
       
       return jwt.verify(token, tokenKey);
     } catch (err) {
