@@ -3,6 +3,7 @@ import { galleryConfig } from './config/serverless/parts/galleryConf/gallery';
 import { authConfig } from './config/serverless/parts/authConf/auth';
 import { joinParts } from './config/serverless/utils';
 import { galleryTableConfig } from './config/serverless/parts/DBConf/table';
+import { bucketImageConfig } from './config/serverless/parts/S3_Bucket/bucket';
 
 
 const CLIENT = '${file(./env.yml):${self:provider.stage}.CLIENT}';
@@ -132,5 +133,6 @@ const masterConfig: AWS = {
 module.exports = joinParts(masterConfig, [
   authConfig,
   galleryConfig,
-  galleryTableConfig
+  galleryTableConfig,
+  bucketImageConfig,
 ]);
