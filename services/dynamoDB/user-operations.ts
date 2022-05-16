@@ -5,6 +5,7 @@ import { hashPassword } from "@services/password-operations.service";
 import { comparePasswords } from "@services/password-operations.service";
 import { 
   HttpInternalServerError,
+  AlreadyExistsError
 } from '@floteam/errors';
 import { DynamoDBService } from "@services/dynamoDB/dynamo.service";
 import { getEnv } from "@helper/environment";
@@ -15,12 +16,20 @@ export class UserService {
   private readonly profilePrefix = getEnv('PROFILE_TAG');
   
   async addNewUser(userData?: UserData) {
+    console.log('in addNewUser');
+    
     try {
       
       if (userData) {
+        console.log(userData);
+        
         let email = userData.email;
         let password = userData.password;
         let result = await this.createUserInDB(email, password);
+
+        if (!result) {
+          throw new AlreadyExistsError('Пользователь существует')
+        }
   
         return result;
           
@@ -36,16 +45,26 @@ export class UserService {
   }
   
   async createUserInDB(email:string, password:string) {
+
     try{
+      console.log('try to create user', email, password);
+      
       let  userIsExist = await this.getUser(email);
+
+      console.log('user is exist', userIsExist);
+      
   
       if(!userIsExist) {
+        console.log('user not exist');
+        
         const hashedData = await hashPassword(password);
+        console.log('hashedData: ', hashedData);
         const attributes = {
           password: hashedData.password,
           salt: hashedData.salt,
         }
-        const newUser = this.dynamoDBService.putItem(email, `${this.profilePrefix}#${email}`, this.tableName, attributes);
+        const newUser = await this.dynamoDBService.putItem(email, `${this.profilePrefix}#${email}`, this.tableName, attributes);
+        console.log('new user', newUser);
         
         return newUser;
       } 
@@ -65,10 +84,14 @@ export class UserService {
       const user = await this.getUser(email);
   
       if(user) {
+        console.log('user is in checkUser');
+        
           const userData = user.Item;
           const validPassword = userData!.password;
           const userSalt = userData!.salt;
           const isValid = await comparePasswords(password, validPassword, userSalt);
+          console.log('compare passwords res: ', isValid);
+          
   
           return isValid;
       } 
@@ -80,10 +103,13 @@ export class UserService {
   }
   
   async getUser(email: string) { // this func is instead of User.exist
+    console.log('in getUser with email: ', email);
+    
     try {
       const user = await this.dynamoDBService.getItem(email, `${this.profilePrefix}#${email}`, this.tableName);
-
-      if(!user.Item) {
+      console.log('getItem result: ', user);
+      
+      if(!user!.Item) {
         return false;
       }
 

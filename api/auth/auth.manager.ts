@@ -13,10 +13,14 @@ export class AuthorizationManager {
   }
 
   validateUserData(userData: string, validate: boolean) {
+    console.log('in validate');
+    
     const userObject: UserData = JSON.parse(userData);
 
     if(validate) {
       if (userObject.email && userObject.password) {
+        console.log('data is validated');
+        
         return userObject;
       }
 
@@ -27,7 +31,11 @@ export class AuthorizationManager {
   }
 
   signUp (userData: string) {
+    console.log('im manager');
+    
     const userObject = this.validateUserData(userData, true);
+    console.log('manager uo ', userObject);
+    
 
     return this.service.signUp(userObject);
   }

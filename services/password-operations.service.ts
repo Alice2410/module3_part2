@@ -9,6 +9,8 @@ const scryptAsync = promisify< crypto.BinaryLike,  crypto.BinaryLike, number, Bu
 
 export async function hashPassword (password: string) {
   try {
+    console.log('hashing password: ', password);
+    
     const salt = crypto.randomBytes(32).toString('hex');
     const hashedPassword = await scryptAsync(password, salt, 64);
 
@@ -16,6 +18,8 @@ export async function hashPassword (password: string) {
       password: hashedPassword.toString('hex'),
       salt: salt,
     };
+    
+    
 
   return hash;
   } catch(e) {
@@ -25,9 +29,13 @@ export async function hashPassword (password: string) {
 
 export async function comparePasswords (password: string, correctData: string, salt: string) {
   try{
+    console.log('in compare password data: ', 'pass: ', password, 'corrD: ' ,correctData, 'salt: ' , salt);
+    
     
     const hashedUserPassword = await scryptAsync(password, salt, 64);
-    const isValid = (salt + hashedUserPassword.toString('hex')) === correctData;
+    console.log('hashedPass: ', hashedUserPassword.toString('hex'), 'correct: ', correctData);
+    
+    const isValid = (hashedUserPassword.toString('hex')) === correctData;
 
     return isValid;
   } catch(e) {

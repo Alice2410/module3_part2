@@ -9,7 +9,7 @@ import {
 } from '@floteam/errors';
 
 export class ImageService {
-  async getArrayLength (id: ObjectId, filter: string) { 
+  async getArrayLength (email: string, filter: string) { 
     try {
       const findFilter = getImagesFilter(filter, id);
       const imagesNumber = await Image.countDocuments(findFilter);

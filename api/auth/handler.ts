@@ -6,6 +6,7 @@ import {
 } from "aws-lambda";
 import { AuthorizationManager } from './auth.manager';
 import { jwtToken } from './auth.interface';
+import { log } from '@helper/logger';
 import { 
   HttpUnauthorizedError,
 } from '@floteam/errors';
@@ -14,10 +15,14 @@ import { APIGatewayAuthorizerSimpleResult, APIGatewayRequestAuthorizerHttpApiPay
 const manager = new AuthorizationManager();
 
 export const signUp: APIGatewayProxyHandlerV2 = async(event) => {
+  console.log(event);
+
   try { 
     if (!event.body) {
       throw new HttpUnauthorizedError('Нет пользовательских данных')
     } 
+    console.log('ev b ', event.body);
+    
     const response = await manager.signUp(event.body);
 
     return createResponse(200, response);

@@ -2,11 +2,10 @@ import { ObjectId } from "mongodb";
 import path from "path";
 import fs from "fs";
 import * as config from "../../services/config";
-import { connectToDB } from "@services/connect-to-DB.service";
 import { ResponseObject } from "./gallery.inteface";
 import { MultipartFile } from 'lambda-multipart-parser';
-import { ImageService } from "@models/MongoDB/image-operations";
-import { UserService } from "@models/MongoDB/user-operations";
+import { ImageService } from "@models/DynamoDB/image-operations";
+import { UserService } from "@services/dynamoDB/user-operations";
 import { 
   HttpBadRequestError,
   HttpInternalServerError,
@@ -26,9 +25,9 @@ export class GalleryService {
     }
     
     try {
-      await connectToDB();
-      const userId: ObjectId = await User.getId(userEmail);
-      const allImagesNumber = await Image.getArrayLength(userId, filter);
+      // await connectToDB();
+      // const userId: ObjectId = await User.getId(userEmail);
+      const allImagesNumber = await Image.getArrayLength(userEmail, filter);
       const total = await getTotalPages(limitNumber, allImagesNumber);
       const page = checkPageNumber(pageNumber, total);
 
@@ -54,7 +53,6 @@ export class GalleryService {
 
   async uploadImage(image: MultipartFile, userEmail: string) {
     try {
-      await connectToDB();
       const userId: ObjectId = await User.getId(userEmail);
       const fileName = await saveImageLocal(image);
       await Image.addImage(fileName, userId);
@@ -68,7 +66,7 @@ export class GalleryService {
 
   async uploadDefaultImages () {
     try {
-      await connectToDB();
+      // await connectToDB();
       const image = await Image.saveImagesToDB();
 
       return 'Картинки добавлены';

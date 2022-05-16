@@ -1,6 +1,7 @@
 import { UserData } from "./auth.interface";
-import { UserService } from "@models/DynamoDB/user-operations";
+import { UserService } from "@services/dynamoDB/user-operations";
 import jwt from "jsonwebtoken";
+import { getEnv } from '@helper/environment';
 import { 
   HttpUnauthorizedError,
   HttpInternalServerError,
@@ -8,17 +9,23 @@ import {
 } from '@floteam/errors';
 
 const tokenKey = process.env.TOKEN_KEY as string;
+// const tokenKey = getEnv('TOKEN_KEY');
+
 
 
 export class AuthorizationService {
   User = new UserService();
 
   async signUp(userData: UserData) {
+    console.log('in service', userData);
+    
     try {
       const newUser = await this.User.addNewUser(userData);
-      if (!newUser) {
-        throw new AlreadyExistsError('Пользователь существует')
-      }
+      console.log('addNewUser result: ', newUser);
+      
+      // if (!newUser) {
+      //   throw new AlreadyExistsError('Пользователь существует')
+      // }
       
       return true;
     } catch(e) {
@@ -28,12 +35,26 @@ export class AuthorizationService {
 
   async logIn(userData: UserData) {
     try {
+      console.log('in logIn');
+      
       const isValid = await this.User.checkUser(userData);
 
-      if (isValid) {
-        let token = jwt.sign({sub: userData.email}, tokenKey);
+      console.log('isValid result: ', isValid);
+      
 
-        return token;
+      if (isValid) {
+        console.log('user is valid');
+        console.log('email: ', userData.email, 'tokenKey: ', tokenKey);
+        
+        try {
+          let token = jwt.sign({sub: userData.email}, tokenKey);
+          console.log(token);
+
+          return token;
+        } catch(e) {
+          console.log(e.message);
+        }
+        
       } else {
         throw new HttpUnauthorizedError('Пользователь неавторизован')
       }

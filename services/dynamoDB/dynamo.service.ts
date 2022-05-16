@@ -20,31 +20,48 @@ export class DynamoDBService {
     this.ddbDocClient = DynamoDBDocumentClient.from(ddbClient, options);
   }
 
-  async getItem(primaryKey: string, sortKey: string, tableName: string){
+  async getItem(partitionKey: string, sortKey: string, tableName: string){
+    console.log('in getItem');
+    console.log('pk: ', partitionKey, 'sk: ', sortKey, 'tn: ', tableName);
+    
+    
     const params: GetCommandInput = {
       TableName: tableName,
       Key: {
-        primaryKey,
-        sortKey,
+        partitionKey: partitionKey,
+        sortKey: sortKey,
       },
     };
 
-    const item = await this.ddbDocClient.send(new GetCommand(params));
+    try {
+      const item = await this.ddbDocClient.send(new GetCommand(params));
+      console.log('item: ', item);
 
-    return item;
+      return item;
+    } catch(err) {
+      console.log(err);
+    }
+    // const item = await this.ddbDocClient.send(new GetCommand(params));
+    // console.log('item: ', item);
+    
+
+    
   }
 
-  async putItem(primaryKey: string, sortKey: string, tableName: string, attributes: object){
+  async putItem(partitionKey: string, sortKey: string, tableName: string, attributes: object){
     const params: PutCommandInput = {
       TableName: tableName,
       Item: {
-        primaryKey,
+        partitionKey,
         sortKey,
         ...attributes
       },
     };
 
     const result = await this.ddbDocClient.send(new PutCommand(params));
+
+    console.log('putItem result: ', result);
+    
 
     return result;
   }

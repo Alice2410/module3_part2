@@ -6,8 +6,8 @@ import { galleryTableConfig } from './config/serverless/parts/DBConf/table';
 
 
 const CLIENT = '${file(./env.yml):${self:provider.stage}.CLIENT}';
-const SERVICE_NAME = `template-sls`;
-const STAGE = '${opt:stage, "dev"}'; //'${opt:stage, "dev"}';
+const SERVICE_NAME = `Alice-template-sls`;
+const STAGE = '${opt:stage, "dev"}'; 
 const REGION = '${file(./env.yml):${self:provider.stage}.REGION}';
 const PROFILE = '${file(./env.yml):${self:provider.stage}.PROFILE}';
 
