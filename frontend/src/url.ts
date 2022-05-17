@@ -4,22 +4,22 @@ export const basicGalleryURL = 'http://localhost:5000/gallery';
 export const localStorageTokenKey = 'token';
 export const tokenTimestampKey = 'tokenReceiptTime';
 
-// export interface Token {
-//     token: string;
-// }
+export interface Token {
+    token: string;
+}
 
-// export interface Error {
-//     errorMessage: string;
-// }
+export interface Error {
+    errorMessage: string;
+}
 
-// export interface Gallery {
-//     objects: ImageObject[];
-//     page: number;
-//     total: number;
-// }
+export interface Gallery {
+    objects: ImageObject[];
+    page: number;
+    total: number;
+}
 
-// export interface ImageObject {
-//     id: string;
-//     path: string;
-//     metadata: object;
-// }
+export interface ImageObject {
+    id: string;
+    path: string;
+    metadata: object;
+}

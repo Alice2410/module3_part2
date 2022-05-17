@@ -1,9 +1,14 @@
 import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKey, ImageObject } from "./url.js";
+import { Metadata } from "./metadata.js";
+
 const linksList = document.getElementById('links');
 const uploadImageForm = document.getElementById('upload') as HTMLFormElement;
 const uploadFile = document.getElementById("file") as HTMLInputElement;
 const filterButton = document.getElementById("filter-button") as HTMLButtonElement;
-let formData = new FormData();
+
+const formData = new FormData();
+const metadataService = new Metadata();
+
 let tokenObject: Token;
 
 setInterval(checkTokenIs, 1000);
@@ -13,6 +18,7 @@ renderButton();
 linksList?.addEventListener("click", createNewAddressOfCurrentPage);
 filterButton?.addEventListener("click", changeFilter);
 uploadImageForm?.addEventListener("submit", startUpload);
+uploadFile.addEventListener('change', (e) => {metadataService.getMetadata(e)});
 
 function startUpload(e: Event) {
     e.preventDefault();
@@ -115,6 +121,11 @@ function redirectToAuthorization() {
         let currentPage = window.location;
         let searchParam = currentPage.search;
         window.location.href = "index.html" + searchParam;
+
+        linksList?.removeEventListener("click", createNewAddressOfCurrentPage);
+        filterButton?.removeEventListener("click", changeFilter);
+        uploadImageForm?.removeEventListener("submit", startUpload);
+        uploadFile.removeEventListener('change', (e) => {metadataService.getMetadata(e)});
 }
 
 function checkResponse (response: Response) {
