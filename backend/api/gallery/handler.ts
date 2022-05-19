@@ -42,9 +42,8 @@ export const getGallery: APIGatewayProxyHandler = async (event, context) => {
   try {
     const manager = new GalleryManager();
     const queryParams = event.queryStringParameters as unknown as QueryParameters;
-    // const userEmail = event.requestContext.authorizer?.jwt.claims.sub as string;
-    const userEmail = event.requestContext.authorizer?.lambda.email;
-    const result = await manager.getImages(queryParams, userEmail);
+    const email: string = event.requestContext.authorizer?.lambda.email;
+    const result = await manager.getImages(queryParams, email);
 
     return createResponse(200, result);
   } catch (e) {

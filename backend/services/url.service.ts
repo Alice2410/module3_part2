@@ -13,4 +13,11 @@ export class URLService {
     console.log('PutUrl: ', uploadToS3Url);
     return uploadToS3Url;
   }
+
+  async generatePreSignedGetUrl(imageName: string) {
+    const getFromS3Url = await this.s3.getPreSignedGetUrl(imageName, this.bucket);
+
+    console.log('PutUrl: ', getFromS3Url);
+    return getFromS3Url;
+  }
 }

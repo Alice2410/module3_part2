@@ -16,12 +16,16 @@ export class GalleryService {
     let requestGalleryURL = basicGalleryURL + window.location.search;
     
     try {
-        const response = await fetch.makeFetch(requestGalleryURL, "GET", "application/json")
+        const response = await fetch.makeFetch(requestGalleryURL, "GET", "application/json");
+        // let responseGalleryObj = await response.clone().json();
+        // console.log(responseGalleryObj);
         
         if (response) {
 
           this.checkResponse(response);
           let responseObj: Gallery = await response.json();
+          console.log(responseObj);
+          
           this.createLinks(responseObj);
           this.createImages(responseObj);
 
@@ -36,6 +40,8 @@ export class GalleryService {
 
   checkResponse (response: Response) {
     if (response.ok) {
+      console.log('response is ok');
+      
         return response;
     } 
 
@@ -67,15 +73,14 @@ export class GalleryService {
   }
 
   createImages(imagesObject: Gallery) {
-    let imagesObjArray = imagesObject.objects;
-    let imagesPathsArr = imagesObjArray.map(imageObject => imageObject.path);
-
+    let imagesPathsArr = imagesObject.objects;
+    console.log('paths: ', imagesPathsArr);
+  
     let imageSection = document.getElementById("photo-section");
 
     for (const imgPath of imagesPathsArr) {
         let galleryImage = document.createElement('img');
-        
-        galleryImage.src = './resources/images/' + imgPath;
+        galleryImage.src = imgPath;
         imageSection?.append(galleryImage);
     }
   }

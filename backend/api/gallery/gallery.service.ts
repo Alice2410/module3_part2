@@ -1,8 +1,6 @@
-import path from "path";
 import fs from "fs";
 import * as config from "../../services/config";
 import { ResponseObject } from "./gallery.inteface";
-import { MultipartFile } from 'lambda-multipart-parser';
 import { ImageService } from "../../models/DynamoDB/image-operations";
 import { ImageDBService } from "services/dynamoDB/image.service";
 import { S3Service } from "../../services/s3Service";
@@ -22,37 +20,88 @@ export class GalleryService {
   urlService = new URLService();
 
   async getImages(pageNumber: number, limitNumber: number, filter: string, userEmail: string) {
+    let imagesNamesArr;
+    let imagesLinks;
+    let links;
+
+    const getImgRes = await this.imageDBService.getImages(userEmail, filter);
+
     let responseGalleryObj: ResponseObject = {
       objects: [],
       page: 0,
       total: 0,
     }
-    
-    try {
-      // const userId: ObjectId = await User.getId(userEmail);
 
-      const allImagesNumber = await Image.getArrayLength(userEmail, filter);
-      const total = await getTotalPages(limitNumber, allImagesNumber);
-      const page = checkPageNumber(pageNumber, total);
-
-      if (page) {
-        const objects = await Image.getImages(filter, page, limitNumber, userEmail)
-
-        responseGalleryObj.objects = objects;
-        responseGalleryObj.page = page;
-        responseGalleryObj.total = total;
-
-        return responseGalleryObj;
-      } else {
-        throw new HttpBadRequestError(`Страницы не существует`)
-      }
-    } catch(e) {
-      if (e instanceof HttpBadRequestError){
-        throw new HttpBadRequestError(e.message); 
-      } 
-
-      throw new HttpInternalServerError(e.message);
+    if(getImgRes.Items) {
+      let start = limitNumber * (pageNumber - 1);
+      let end = limitNumber * pageNumber;
+      
+      imagesNamesArr = getImgRes.Items.slice( start, end).map((item) => {
+        return item.metadata.name;
+      });
     }
+
+    if(imagesNamesArr){
+      imagesLinks = imagesNamesArr.map(async (imageName: string) => {
+        let imageLink = this.urlService.generatePreSignedGetUrl(imageName);
+        return imageLink;
+      })
+      console.log('imagesLinks: ', imagesLinks);
+      links = await Promise.all(imagesLinks);
+      console.log('promise all: ', links);
+      
+    }
+
+    const allImagesNumber = getImgRes.Count;
+    const total = await getTotalPages(limitNumber, allImagesNumber);
+    const page = checkPageNumber(pageNumber, total);
+
+    
+
+    if (page) {
+      responseGalleryObj.total = total;
+      responseGalleryObj.page = page;
+      responseGalleryObj.objects = links;
+
+      return responseGalleryObj;
+    } else {
+      throw new HttpBadRequestError(`Страницы не существует`)
+    }
+
+
+    // получить картинки из дб
+      // с фильтром
+
+
+      // без фильтра
+
+    // взять для страницы ссылки и лтправить на фронт
+    
+    console.log('aaaa');
+  
+    // try {
+    //   // const userId: ObjectId = await User.getId(userEmail);
+
+  
+
+    //   if (page) {
+        // const objects = await Image.getImages(filter, page, limitNumber, userEmail)
+
+    //     responseGalleryObj.objects = objects;
+    //     responseGalleryObj.page = page;
+    //     responseGalleryObj.total = total;
+
+    //     return responseGalleryObj;
+    //   } else {
+    //     throw new HttpBadRequestError(`Страницы не существует`)
+    //   }
+    // } catch(e) {
+    //   if (e instanceof HttpBadRequestError){
+    //     throw new HttpBadRequestError(e.message); 
+    //   } 
+
+    //   throw new HttpInternalServerError(e.message);
+    // }
   }
 
   async uploadImage(email: string, metadata: ImageMetadata) {
@@ -112,25 +161,10 @@ function checkPageNumber(pageNumber: number, total: number) {
   return ((pageNumber > 0) && (pageNumber <= total)) ? pageNumber : false;
 }
 
-async function getTotalPages(limit: number, imagesNumber: number) {
-         
-  return Math.ceil(imagesNumber / limit);
-}
-
-async function saveImageLocal(file: MultipartFile) {
-  let fileName = file.filename;
-  let noSpaceFileName = fileName.replace(/\s/g, '');
-  let newFileName = 'user' + '_' +  noSpaceFileName;
-
-  try {
-    await fs.promises.writeFile(
-      path.join(pathToImgDir, newFileName),
-      file.content
-    );
-
-    return newFileName;
-  } catch(e) {
-    throw new HttpInternalServerError(e.message)
+async function getTotalPages(limit: number, imagesNumber: number | undefined) {
+  if(imagesNumber) {
+    return Math.ceil(imagesNumber / limit);
   }
+  
+  throw new HttpInternalServerError('Картинки не получены')
 }
-

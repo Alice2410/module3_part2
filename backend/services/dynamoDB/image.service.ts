@@ -3,13 +3,45 @@ import { getEnv } from "../../helper/environment";
 import { ImageMetadata } from "api/gallery/gallery.inteface";
 import { 
   HttpInternalServerError,
-  AlreadyExistsError
+  AlreadyExistsError,
+  HttpBadRequestError
 } from '@floteam/errors';
 
 export class ImageDBService {
   private readonly dynamoDBService = new DynamoDBService();
   private readonly tableName = getEnv('TABLE_NAME');
   private readonly imagePrefix = getEnv('IMAGE_TAG');
+
+  async getImages(email: string, filter: string) {
+    console.log('in getImages');
+
+    try {
+      console.log(email, filter);
+
+      // if (filter === 'true') {
+
+        const params = {
+          tableName: this.tableName,
+          keyCondition: 'partitionKey = :e AND begins_with(sortKey , :ip)',
+          attributeValues: {
+            ':e': `${email}`,
+            ':ip': `${this.imagePrefix}`
+          },
+        }
+        const images = this.dynamoDBService.query(params.tableName, params.attributeValues, params.keyCondition)
+          
+        return images;
+      // }
+      
+    } catch(e) {
+      if (e instanceof HttpBadRequestError){
+        throw new HttpBadRequestError(e.message); 
+      } 
+
+      throw new HttpInternalServerError(e.message);
+    }
+    
+  }
 
   async addNewImage(metadata: ImageMetadata, email: string) {
     console.log('in addNewImage');

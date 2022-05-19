@@ -21,6 +21,20 @@ export class DynamoDBService {
     this.ddbDocClient = DynamoDBDocumentClient.from(ddbClient, options);
   }
 
+  async query(tableName: string, attributeValues: object, keyCondition: string){
+    const params: QueryCommandInput = {
+      TableName: tableName,
+      ExpressionAttributeValues: attributeValues,
+      KeyConditionExpression: keyCondition,
+    }
+
+    const items = await this.ddbDocClient.send(new QueryCommand(params));
+    console.log('query items: ', items);
+    
+
+    return items;
+  }
+
   async getItem(partitionKey: string, sortKey: string, tableName: string){
     console.log('in getItem');
     console.log('pk: ', partitionKey, 'sk: ', sortKey, 'tn: ', tableName);
@@ -73,16 +87,5 @@ export class DynamoDBService {
     }
   }
 
-  async query(tableName: string, attributeValues: object, keyCondition: string, filter: string){
-    const params: QueryCommandInput = {
-      TableName: tableName,
-      ExpressionAttributeValues: attributeValues,
-      KeyConditionExpression: keyCondition,
-      FilterExpression: filter,
-    }
-
-    const items = await this.ddbDocClient.send(new QueryCommand(params));
-
-    return items;
-  }  
+    
 }

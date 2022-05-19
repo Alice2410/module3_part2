@@ -33,3 +33,17 @@ export interface ImageMetadata {
   size: number,
   type: string,
 }
+
+export interface GetImageParams {
+  limitNumber: number;
+  pageNumber: number;
+  filter: string;
+}
+
+export interface ImageDB {
+  metadata: Object;
+  partitionKey: string;
+  path: string;
+  sortKey: string;
+  resource: string;
+}

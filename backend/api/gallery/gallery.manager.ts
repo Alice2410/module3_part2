@@ -11,7 +11,7 @@ export class GalleryManager {
     this.service = new GalleryService();
   }
 
-  getImages(queryParams: QueryParameters, userEmail: string): Promise<ResponseObject> {
+  async getImages(queryParams: QueryParameters, userEmail: string) {
     const page = queryParams?.page || '1';
     const limit = queryParams?.limit || '2';
     const filter = queryParams?.filter || 'false';
@@ -19,7 +19,11 @@ export class GalleryManager {
     const pageNumber = +page;
     const limitNumber = +limit;
 
-    return this.service.getImages(pageNumber, limitNumber, filter, userEmail);
+    let mahagerRes = await this.service.getImages(pageNumber, limitNumber, filter, userEmail);
+    console.log('manager res: ', mahagerRes);
+    
+
+    return mahagerRes;
   }
 
   async uploadImages(email: string, metadata: string) {
