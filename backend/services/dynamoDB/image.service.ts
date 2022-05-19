@@ -18,15 +18,15 @@ export class ImageDBService {
       if (metadata) {
         console.log(metadata);
         
-        let result = await this.createImageInDB(email, metadata);
-        console.log(result);
+        let image = await this.createImageInDB(email, metadata);
+        console.log('image: ', image);
         
 
-        if (!result) {
+        if (!image) {
           throw new AlreadyExistsError('Пользователь существует')
         }
   
-        return result;
+        return image;
           
       }         
     } catch(err) {
@@ -41,8 +41,9 @@ export class ImageDBService {
       const attributes = {
         path: metadata.name,
         metadata: metadata,
+        resource: 'image'
       }
-      const newImage = await this.dynamoDBService.putItem(email, `${this.imagePrefix}#${email}#${metadata.name}`, this.tableName, attributes);
+      const newImage = this.dynamoDBService.putItem(email, `${this.imagePrefix}#${email}#${metadata.name}`, this.tableName, attributes);
       console.log('new image: ', newImage);
       
       return newImage;

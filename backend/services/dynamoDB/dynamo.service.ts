@@ -64,10 +64,9 @@ export class DynamoDBService {
       let putCommand = new PutCommand(params);
       console.log('put: ', putCommand);
       
-      const result = this.ddbDocClient.send(putCommand);
-
-      console.log('putItem result: ', result);
-      return result;
+      // this.ddbDocClient.send(putCommand);
+      
+      return this.ddbDocClient.send(putCommand);
     } catch(err) {
       console.log('putItem error: ', err);
       throw new HttpInternalServerError(err.message)

@@ -85,8 +85,6 @@ export class GalleryService {
     let body = JSON.stringify(data);
     console.log('body from upload: ' + JSON.stringify(data));
     
-    
-
     if (uploadFile.files) {
 
         for (const file of uploadFile.files) {
@@ -96,10 +94,8 @@ export class GalleryService {
     
     try {
         const response = await fetch.makeFetch(postUrl, "POST", undefined, body);
-        console.log('service: ', response);
+
         if(response) {
-          
-          
           const uploadRes = await fetch.makeFetch(response, "PUT", undefined, image);
           if (uploadRes.status === 200) {
             console.log('Картинка загружена');
@@ -109,8 +105,6 @@ export class GalleryService {
         let currentPage = window.location;
         let searchParam = currentPage.search;
         console.log(response);
-        
-
         // window.location.href = "gallery.html" + searchParam;
     } catch(error) {
         let err = error as Error;

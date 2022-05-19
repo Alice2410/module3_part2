@@ -61,7 +61,9 @@ export class GalleryService {
       console.log('image: ', metadata);
 
       //сохранить в бд
-      const addImgRes = this.imageDBService.addNewImage(metadata, email) 
+      const addImgRes = await this.imageDBService.addNewImage(metadata, email);
+      console.log('addImgRes: ', addImgRes);
+      
 
       //сделать подписанную ссылку
       const uploadLink = await this.urlService.generatePreSignedPutUrl(metadata);
