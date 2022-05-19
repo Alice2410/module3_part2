@@ -19,7 +19,11 @@ export class Metadata {
     let res = this.countMetadata(e);
     console.log('metadata: ', res);
 
-    return res;
+    if(res) {
+      return res;
+    }
+
+    throw new Error('Метадата не получена')
   }
 }
 

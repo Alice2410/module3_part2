@@ -1,23 +1,26 @@
-import { ObjectId } from "mongodb";
 import path from "path";
 import fs from "fs";
 import * as config from "../../services/config";
 import { ResponseObject } from "./gallery.inteface";
 import { MultipartFile } from 'lambda-multipart-parser';
-import { ImageService } from "backend/models/DynamoDB/image-operations";
-import { UserService } from "backend/services/dynamoDB/user-operations";
-import { S3Service } from "backend/services/s3Service";
+import { ImageService } from "../../models/DynamoDB/image-operations";
+import { ImageDBService } from "services/dynamoDB/image.service";
+import { S3Service } from "../../services/s3Service";
+import { URLService } from "services/url.service";
 import { 
   HttpBadRequestError,
   HttpInternalServerError,
  } from '@floteam/errors';
+import { ImageMetadata } from "./gallery.inteface";
 
-const User = new UserService();
 const Image = new ImageService();
 
 export const pathToImgDir = config.IMAGES_PATH;
 
 export class GalleryService {
+  imageDBService = new ImageDBService();
+  urlService = new URLService();
+
   async getImages(pageNumber: number, limitNumber: number, filter: string, userEmail: string) {
     let responseGalleryObj: ResponseObject = {
       objects: [],
@@ -52,24 +55,31 @@ export class GalleryService {
     }
   }
 
-  async uploadImage(image: string, email: string) {
+  async uploadImage(email: string, metadata: ImageMetadata) {
     try {
       // const userId: ObjectId = await User.getId(userEmail);
-      console.log('image: ', image);
-      
-
-      //сохранить в s3
+      console.log('image: ', metadata);
 
       //сохранить в бд
+      const addImgRes = this.imageDBService.addNewImage(metadata, email) 
+
+      //сделать подписанную ссылку
+      const uploadLink = await this.urlService.generatePreSignedPutUrl(metadata);
+
+      console.log('presigned upload link: ', uploadLink);
+      
+      //сохранить в s3
+
+      
 
       // const fileName = await saveImageLocal(image);
       // await Image.addImage(fileName, userId);
-
+      return uploadLink;
     } catch (e) {
       throw new HttpInternalServerError(e.message);
     }
 
-    return 'Изображение загружено';
+    
   }
 
   async uploadDefaultImages () {

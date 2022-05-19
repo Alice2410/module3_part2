@@ -1,6 +1,7 @@
 import { QueryParameters } from './gallery.inteface';
 import { ResponseObject } from './gallery.inteface';
 import { GalleryService } from './gallery.service';
+import { ImageMetadata } from './gallery.inteface';
 import { MultipartRequest } from 'lambda-multipart-parser';
 
 export class GalleryManager {
@@ -21,16 +22,15 @@ export class GalleryManager {
     return this.service.getImages(pageNumber, limitNumber, filter, userEmail);
   }
 
-  async uploadImages(body: string, email: string) {
-    // const file = imagesArr.files[0]
+  async uploadImages(email: string, metadata: string) {
     
-    const parsedBody = body;
-    console.log('par b: ', parsedBody);
-    // console.log('email: ', userEmail);
+    const metadataObject: ImageMetadata = JSON.parse(metadata);
+    console.log('metadata: ', metadataObject);
     
-    
-
-    return this.service.uploadImage(body, email);
+    const result = await this.service.uploadImage(email, metadataObject);
+    console.log('result from upload manager: ', result);
+  
+    return result;
   }
   
   async uploadDefaultImages () {

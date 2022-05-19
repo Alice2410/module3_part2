@@ -1,4 +1,4 @@
-import { ValidUser } from "backend/api/auth/auth.interface";
+import { ValidUser } from "../api/auth/auth.interface";
 
 export let validUsers: ValidUser = {
   'asergeev@flo.team': 'jgF5tn4F',

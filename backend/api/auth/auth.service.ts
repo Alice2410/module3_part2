@@ -1,7 +1,6 @@
 import { UserData } from "./auth.interface";
-import { UserService } from "backend/services/dynamoDB/user-operations";
+import { UserService } from "../../services/dynamoDB/user-operations";
 import jwt from "jsonwebtoken";
-import { getEnv } from 'backend/helper/environment';
 import { 
   HttpUnauthorizedError,
   HttpInternalServerError,
@@ -9,9 +8,6 @@ import {
 } from '@floteam/errors';
 
 const tokenKey = process.env.TOKEN_KEY as string;
-// const tokenKey = getEnv('TOKEN_KEY');
-
-
 
 export class AuthorizationService {
   User = new UserService();

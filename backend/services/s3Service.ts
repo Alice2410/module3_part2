@@ -8,24 +8,31 @@ import {
   PutObjectOutput,
   PutObjectRequest,
 } from 'aws-sdk/clients/s3';
+import { getEnv } from 'helper/environment';
+
+const region = getEnv('REGION', true);
 
 export class S3Service {
-  public s3 = new S3();
+  public s3 = new S3({region: region});
 
-  public getPreSignedPutUrl(key: string, bucket: string): string {
+  public getPreSignedPutUrl(key: string, bucket: string) {
     const params = {
       Bucket: bucket,
       Key: key,
+      Expires: 60000000,
+      ContentType: 'image/jpeg'
     };
-    return this.s3.getSignedUrl('putObject', params);
+
+    return this.s3.getSignedUrlPromise('putObject', params);
   }
 
-  public getPreSignedGetUrl(key: string, bucket: string): string {
+  public getPreSignedGetUrl(key: string, bucket: string) {
     const params = {
       Bucket: bucket,
       Key: key,
+      Expires: 60000000,
     };
-    return this.s3.getSignedUrl('getObject', params);
+    return this.s3.getSignedUrlPromise('getObject', params);
   }
 
   public remove(key: string, bucket: string): Promise<DeleteObjectOutput> {

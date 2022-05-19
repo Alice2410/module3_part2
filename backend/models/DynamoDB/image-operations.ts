@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from "path";
-import * as config from 'backend/services/config';
-import { Image } from 'backend/models/DynamoDB/image';
+import * as config from '../../services/config';
+import { Image } from './image';
 import { ObjectId } from "mongodb";
-import { ImageInterface } from 'backend/api/gallery/gallery.inteface';
+import { ImageInterface } from '../../api/gallery/gallery.inteface';
 import { 
   HttpInternalServerError,
 } from '@floteam/errors';
@@ -31,37 +31,6 @@ export class ImageService {
     }
   }
   
-  async saveImagesToDB() { //upload картинок
-    try {
-      const imagesPathsArr = await getImagesArr();
-      
-      for(const imgPath of imagesPathsArr) {
-        const imageIsExist = await Image.exists({path: imgPath});
-  
-        if(!imageIsExist) {
-          try{
-            const image = await this.addImage(imgPath);
-          } catch(err) {
-              let error = err as Error;
-              console.log(error.message)
-          }
-        }
-      }
-    } catch(e) {
-      throw new HttpInternalServerError('Ошибка сохранения картинки в бд')
-    }
-  }
-  
-  async addImage (imagePath: string, owner?: ObjectId) {//upload картинок
-    try { 
-      const metadata = await getMetadata(imagePath);
-      const image: ImageInterface = await Image.create({path: imagePath, metadata: metadata, owner: owner ?? null});
-      
-      return image;
-    } catch(e) {
-      throw new HttpInternalServerError(e.message)
-    }
-  }
 }
 
 async function getMetadata(imageName: string){//как получать метадату для картинки из S3?

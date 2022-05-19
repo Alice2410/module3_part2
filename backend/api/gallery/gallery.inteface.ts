@@ -26,3 +26,10 @@ export interface QueryParameters {
   limit: string;
   filter: string;
 }
+
+export interface ImageMetadata {
+  name: string,
+  lastModifiedDate: Date,
+  size: number,
+  type: string,
+}

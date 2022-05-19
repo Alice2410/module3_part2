@@ -1,6 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommandInput, GetCommand, PutCommandInput, PutCommand, QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { getEnv } from 'backend/helper/environment';
+import { HttpInternalServerError } from "@floteam/errors";
+import { getEnv } from '../../helper/environment';
 
 const region = getEnv('REGION', true);
 
@@ -57,13 +58,20 @@ export class DynamoDBService {
         ...attributes
       },
     };
-
-    const result = await this.ddbDocClient.send(new PutCommand(params));
-
-    console.log('putItem result: ', result);
+    console.log('putItem params: ', params);
     
+    try {
+      let putCommand = new PutCommand(params);
+      console.log('put: ', putCommand);
+      
+      const result = this.ddbDocClient.send(putCommand);
 
-    return result;
+      console.log('putItem result: ', result);
+      return result;
+    } catch(err) {
+      console.log('putItem error: ', err);
+      throw new HttpInternalServerError(err.message)
+    }
   }
 
   async query(tableName: string, attributeValues: object, keyCondition: string, filter: string){

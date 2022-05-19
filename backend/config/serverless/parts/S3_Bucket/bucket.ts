@@ -28,7 +28,7 @@ export const bucketImageConfig: AWSPartitial = {
               {
                 AllowedHeaders: ['*'],
                 AllowedOrigins: ['*'],
-                AllowedMethods: ['PUT', 'GET'],
+                AllowedMethods: ['PUT', 'GET', 'POST'],
               },
             ],
           },

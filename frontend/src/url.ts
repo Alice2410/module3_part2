@@ -1,6 +1,6 @@
 export const loginURL = 'http://localhost:5000/authorization';
 export const signUpUrl = 'http://localhost:5000/signup';
-export const basicGalleryURL = 'http://localhost:5000/gallery';
+export const basicGalleryURL = 'https://h6dkf12919.execute-api.us-east-1.amazonaws.com/gallery';
 export const localStorageTokenKey = 'token';
 export const tokenTimestampKey = 'tokenReceiptTime';
 
@@ -22,4 +22,11 @@ export interface ImageObject {
     id: string;
     path: string;
     metadata: object;
+}
+
+export interface ImageMetadata {
+    name: string;
+    lastModifiedDate: Date;
+    size: number;
+    type: string;
 }

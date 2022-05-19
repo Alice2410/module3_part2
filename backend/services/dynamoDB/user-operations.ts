@@ -1,14 +1,12 @@
-import { UserData } from "backend/api/auth/auth.interface";
-// import { User } from "@models/MongoDB/user";
-import { validUsers } from "backend/helper/valid-users";
-import { hashPassword } from "backend/services/password-operations.service"; 
-import { comparePasswords } from "backend/services/password-operations.service";
+import { UserData } from "../../api/auth/auth.interface";
+import { validUsers } from "../../helper/valid-users";
+import { hashPassword, comparePasswords } from "../../services/password-operations.service"; 
 import { 
   HttpInternalServerError,
   AlreadyExistsError
 } from '@floteam/errors';
-import { DynamoDBService } from "backend/services/dynamoDB/dynamo.service";
-import { getEnv } from "backend/helper/environment";
+import { DynamoDBService } from "../../services/dynamoDB/dynamo.service";
+import { getEnv } from "../../helper/environment";
 
 export class UserService {
   private readonly dynamoDBService = new DynamoDBService();

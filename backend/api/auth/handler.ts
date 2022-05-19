@@ -1,16 +1,16 @@
-import { errorHandler } from 'backend/helper/http-api/error-handler';
-import { createResponse } from 'backend/helper/http-api/response';
+import { errorHandler } from 'helper/http-api/error-handler';
+import { createResponse } from 'helper/http-api/response';
 import {
   APIGatewayProxyHandlerV2,
   Handler
 } from "aws-lambda";
 import { AuthorizationManager } from './auth.manager';
 import { jwtToken } from './auth.interface';
-import { log } from 'backend/helper/logger';
+import { log } from 'helper/logger';
 import { 
   HttpUnauthorizedError,
 } from '@floteam/errors';
-import { APIGatewayAuthorizerSimpleResult, APIGatewayRequestAuthorizerHttpApiPayloadV2Event } from "backend/interfaces/api-gateway-authorizer.interface";
+import { APIGatewayAuthorizerSimpleResult, APIGatewayRequestAuthorizerHttpApiPayloadV2Event } from "interfaces/api-gateway-authorizer.interface";
 
 const manager = new AuthorizationManager();
 

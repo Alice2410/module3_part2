@@ -1,4 +1,4 @@
-import { getEnv } from 'backend/helper/environment';
+import { getEnv } from 'helper/environment';
 import { format } from '@redtea/format-axios-error';
 
 export function log(...args): undefined {

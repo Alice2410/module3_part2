@@ -1,5 +1,5 @@
-import { arrayToObject } from 'backend/helper/helper';
-import { log } from 'backend/helper/logger';
+import { arrayToObject } from 'helper/helper'; 
+import { log } from 'helper/logger';
 import { CloudFormation } from 'aws-sdk';
 import { DescribeStacksInput, DescribeStacksOutput, Output, Outputs } from 'aws-sdk/clients/cloudformation';
 

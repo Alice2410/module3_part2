@@ -1,6 +1,6 @@
-import { errorHandler } from 'backend/helper/http-api/error-handler';
-import { createResponse } from 'backend/helper/http-api/response';
-import { log } from 'backend/helper/logger';
+import { errorHandler } from '../../helper/http-api/error-handler';
+import { createResponse } from '../../helper/http-api/response';
+import { log } from '../../helper/logger';
 import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { QueryParameters } from './gallery.inteface';
@@ -8,6 +8,7 @@ import { GalleryManager } from './gallery.manager';
 import { MultipartRequest } from 'lambda-multipart-parser';
 import * as parser from 'lambda-multipart-parser';
 import { setUncaughtExceptionCaptureCallback } from 'process';
+import { HttpInternalServerError } from '@floteam/errors';
 
 if (process.env.LAMBDA_TASK_ROOT) {
   process.env.PATH = `${process.env.PATH}:${process.env.LAMBDA_TASK_ROOT}/bin`;
@@ -35,13 +36,14 @@ if (process.env.LAMBDA_TASK_ROOT) {
  * @param context
  */
 
-export const getGallery: APIGatewayProxyHandlerV2 = async (event, context) => {
+export const getGallery: APIGatewayProxyHandler = async (event, context) => {
   log(event);
 
   try {
     const manager = new GalleryManager();
     const queryParams = event.queryStringParameters as unknown as QueryParameters;
-    const userEmail = event.requestContext.authorizer?.jwt.claims.sub as string;
+    // const userEmail = event.requestContext.authorizer?.jwt.claims.sub as string;
+    const userEmail = event.requestContext.authorizer?.lambda.email;
     const result = await manager.getImages(queryParams, userEmail);
 
     return createResponse(200, result);
@@ -53,31 +55,20 @@ export const getGallery: APIGatewayProxyHandlerV2 = async (event, context) => {
 export const addImageGallery: APIGatewayProxyHandler = async (event) => {
   try {
     console.log('in handler, event: ', event);
-
     const manager = new GalleryManager();
-    // const buffer = Buffer.from(event.body!);
-    const email = event.requestContext.authorizer?.lambda.email;
 
-    const json = buffer.toJSON();
+    const email: string = event.requestContext.authorizer?.lambda.email;
+    console.log('email: ', email)
 
     if(event.body) {
-      const result = await manager.uploadImages(buffer, email);
-
+      const result = await manager.uploadImages(email, event.body);
+      console.log('upload res handler: ', result);
+      
       return createResponse(200, result);
     }
 
-    console.log(buffer);
-    console.log('event body: ', event.body);
-
-    // const eventBody = JSON.parse(event.body!);
-    // const images: MultipartRequest = await parser.parse(event);
-    // console.log('images: ', images);
-    // const ownerEmail: string = event.requestContext.authorizer?.jwt.claims.sub;
-    // console.log('ownerEmail: ', );
-    // console.log('auth: ', email); //мыло
+    throw new HttpInternalServerError('Нет event.body')
     
-    
-     
   } catch (e) {
     return errorHandler(e)
   }
