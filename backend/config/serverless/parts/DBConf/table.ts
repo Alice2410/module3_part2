@@ -45,6 +45,10 @@ export const galleryTableConfig: AWSPartitial = {
               AttributeName: 'sortKey',
               AttributeType: 'S',
             },
+            {
+              AttributeName: 'resource',
+              AttributeType: 'S',
+            },
           ],
           KeySchema: [
             {
@@ -54,6 +58,24 @@ export const galleryTableConfig: AWSPartitial = {
             {
               AttributeName: 'sortKey',
               KeyType: 'RANGE',
+            },
+          ],
+          GlobalSecondaryIndexes: [
+            {
+              IndexName: 'ImagesIndex',
+              KeySchema: [
+                {
+                  AttributeName: 'resource',
+                  KeyType: 'HASH',
+                },
+                {
+                  AttributeName: 'partitionKey',
+                  KeyType: 'RANGE',
+                },
+              ],
+              Projection: {
+                ProjectionType: 'ALL',
+              },
             },
           ],
           BillingMode: 'PAY_PER_REQUEST',
