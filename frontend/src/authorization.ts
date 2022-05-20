@@ -55,7 +55,6 @@ async function loginWithToken() {
         const tokenJson = tokenIs(response);
         saveToken(tokenJson);
         saveTokenReceiptTime();
-        tokenService.assignToken();
         redirect();
 
     } catch (err) {

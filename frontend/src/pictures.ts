@@ -14,9 +14,7 @@ const tokenService = new TokenService();
 const galleryService = new GalleryService();
 const fetchFactory = new FetchFactory();
 
-
 tokenService.assignToken();
-fetchFactory.assignToken();
 setInterval(tokenService.checkTokenIs, 100000);
 tokenService.checkLocalStorage();
 galleryService.goToNewGalleryPage();
