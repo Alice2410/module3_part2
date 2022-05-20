@@ -15,12 +15,12 @@ const region = getEnv('REGION', true);
 export class S3Service {
   public s3 = new S3({region: region});
 
-  public getPreSignedPutUrl(key: string, bucket: string) {
+  public getPreSignedPutUrl(key: string, type: string, bucket: string) {
     const params = {
       Bucket: bucket,
       Key: key,
       Expires: 60000000,
-      ContentType: 'image/jpeg'
+      ContentType: type,
     };
 
     return this.s3.getSignedUrlPromise('putObject', params);

@@ -8,7 +8,8 @@ export class URLService {
 
   async generatePreSignedPutUrl(metadata: ImageMetadata) {
     const imageName = `${metadata.name}`;
-    const uploadToS3Url = await this.s3.getPreSignedPutUrl(imageName, this.bucket);
+    const contentType = metadata.type
+    const uploadToS3Url = await this.s3.getPreSignedPutUrl(imageName, contentType,this.bucket);
 
     console.log('PutUrl: ', uploadToS3Url);
     return uploadToS3Url;
