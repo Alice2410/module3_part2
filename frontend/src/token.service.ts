@@ -1,4 +1,4 @@
-import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKey, ImageObject } from "./url.js";
+import { Token, tokenTimestampKey, localStorageTokenKey, } from "./url.js";
 
 export class TokenService {
   private tokenObject: Token | undefined = undefined;

@@ -1,4 +1,4 @@
-import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKey, ImageObject, ImageMetadata } from "./url.js";
+import { ImageMetadata } from "./url.js";
 import { Metadata } from "./metadata.js";
 import { TokenService } from "./token.service.js";
 import { GalleryService } from "./pictures.service.js";

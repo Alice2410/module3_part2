@@ -1,4 +1,4 @@
-import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKey, ImageObject } from "./url.js";
+import { Token, basicURL, Gallery, tokenTimestampKey, localStorageTokenKey, ImageObject } from "./url.js";
 import { TokenService } from "./token.service.js";
 import { ErrorService } from "./error.service.js";
 import { FetchFactory } from "./fetch-fabric.js";
@@ -6,7 +6,7 @@ import { FetchFactory } from "./fetch-fabric.js";
 const tokenService = new TokenService();
 const errorService = new ErrorService();
 const fetch = new FetchFactory();
-
+const basicGalleryURL = basicURL + '/gallery'
 const uploadFile = document.getElementById("file") as HTMLInputElement;
 const formData = new FormData();
 

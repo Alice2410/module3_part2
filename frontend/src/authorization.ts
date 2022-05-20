@@ -1,4 +1,4 @@
-import {Error, loginURL, signUpUrl, Token, localStorageTokenKey, tokenTimestampKey, UserData} from './url.js'
+import {Error, Token, localStorageTokenKey, tokenTimestampKey, UserData, basicURL} from './url.js'
 import { FetchFactory } from './fetch-fabric.js';
 import { TokenService } from './token.service.js';
 const authorizationForm = document.getElementById('authorization-form');
@@ -7,6 +7,7 @@ const userPassword = <HTMLInputElement>document.getElementById('password');
 const signUpButton = <HTMLButtonElement>document.getElementById('signup');
 const fetch = new FetchFactory();
 const tokenService = new TokenService();
+const basicAuthURL = basicURL + '/auth';
 
 authorizationForm?.addEventListener("submit", startAuthorization);
 signUpButton?.addEventListener("click", startSignUp)
@@ -29,6 +30,7 @@ async function signUp() {
     const body = JSON.stringify(user);
     
     try{ 
+        const signUpUrl = basicAuthURL + '/signup';
         const response = await fetch.makeFetch(signUpUrl, "POST", false, "application/json", body);
 
         checkSignUpResponse(response);
@@ -47,6 +49,7 @@ async function loginWithToken() {
     const body = JSON.stringify(user);
     
     try {
+        const loginURL = basicAuthURL + '/login';
         const response = await fetch.makeFetch(loginURL, "POST", false, "application/json", body)     
         checkTokenResponse(response);    
         const tokenJson = tokenIs(response);
