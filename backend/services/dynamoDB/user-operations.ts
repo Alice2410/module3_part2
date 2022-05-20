@@ -59,7 +59,7 @@ export class UserService {
         const attributes = {
           password: hashedData.password,
           salt: hashedData.salt,
-          resource: 'profile'
+          resType: 'profile'
         }
         const newUser = await this.dynamoDBService.putItem(email, `${this.profilePrefix}#${email}`, this.tableName, attributes);
         console.log('new user', newUser);

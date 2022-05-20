@@ -21,11 +21,15 @@ export class DynamoDBService {
     this.ddbDocClient = DynamoDBDocumentClient.from(ddbClient, options);
   }
 
-  async query(tableName: string, attributeValues: object, keyCondition: string){
-    const params: QueryCommandInput = {
-      TableName: tableName,
-      ExpressionAttributeValues: attributeValues,
-      KeyConditionExpression: keyCondition,
+  async query(/*tableName: string, attributeValues: object, keyCondition: string, indexName?: string*/args){
+    let params: QueryCommandInput = {
+      TableName: args.tableName,
+      ExpressionAttributeValues: args.attributeValues,
+      KeyConditionExpression: args.keyCondition,
+    }
+
+    if (args.indexName) {
+      params.IndexName = args.indexName;
     }
 
     const items = await this.ddbDocClient.send(new QueryCommand(params));

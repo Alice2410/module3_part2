@@ -5,9 +5,6 @@ import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { QueryParameters } from './gallery.inteface';
 import { GalleryManager } from './gallery.manager';
-import { MultipartRequest } from 'lambda-multipart-parser';
-import * as parser from 'lambda-multipart-parser';
-import { setUncaughtExceptionCaptureCallback } from 'process';
 import { HttpInternalServerError } from '@floteam/errors';
 
 if (process.env.LAMBDA_TASK_ROOT) {
@@ -72,14 +69,3 @@ export const addImageGallery: APIGatewayProxyHandler = async (event) => {
     return errorHandler(e)
   }
 };
-
-export const uploadDefaultImages: APIGatewayProxyHandlerV2 = async (event, context) => {
-  try {
-    const manager = new GalleryManager();
-    const response = await manager.uploadDefaultImages();
-
-    return createResponse(200, response);
-  } catch (err) {
-    return errorHandler(err);
-  }
-}

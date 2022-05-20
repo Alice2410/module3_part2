@@ -2,6 +2,7 @@ import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKe
 import { Metadata } from "./metadata.js";
 import { TokenService } from "./token.service.js";
 import { GalleryService } from "./pictures.service.js";
+import { FetchFactory } from "./fetch-fabric.js";
 
 const linksList = document.getElementById('links');
 const uploadImageForm = document.getElementById('upload') as HTMLFormElement;
@@ -11,7 +12,11 @@ const filterButton = document.getElementById("filter-button") as HTMLButtonEleme
 const metadataService = new Metadata();
 const tokenService = new TokenService();
 const galleryService = new GalleryService();
+const fetchFactory = new FetchFactory();
 
+
+tokenService.assignToken();
+fetchFactory.assignToken();
 setInterval(tokenService.checkTokenIs, 100000);
 tokenService.checkLocalStorage();
 galleryService.goToNewGalleryPage();

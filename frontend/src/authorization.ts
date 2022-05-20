@@ -1,8 +1,12 @@
-import {Error, loginURL, signUpUrl, Token, localStorageTokenKey, tokenTimestampKey} from './url.js'
+import {Error, loginURL, signUpUrl, Token, localStorageTokenKey, tokenTimestampKey, UserData} from './url.js'
+import { FetchFactory } from './fetch-fabric.js';
+import { TokenService } from './token.service.js';
 const authorizationForm = document.getElementById('authorization-form');
 const userEmail = <HTMLInputElement>document.getElementById('email');
 const userPassword = <HTMLInputElement>document.getElementById('password');
 const signUpButton = <HTMLButtonElement>document.getElementById('signup');
+const fetch = new FetchFactory();
+const tokenService = new TokenService();
 
 authorizationForm?.addEventListener("submit", startAuthorization);
 signUpButton?.addEventListener("click", startSignUp)
@@ -18,19 +22,14 @@ function startSignUp(e: Event) {
 }
 
 async function signUp() {
-    let user = {
+    const user: UserData = {
         email: userEmail.value,
         password: userPassword.value
     };
+    const body = JSON.stringify(user);
     
-    try{
-        const response = await fetch( signUpUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(user),
-        })
+    try{ 
+        const response = await fetch.makeFetch(signUpUrl, "POST", false, "application/json", body);
 
         checkSignUpResponse(response);
     } catch (err) {
@@ -40,35 +39,26 @@ async function signUp() {
 }
 
 async function loginWithToken() { 
-    let user = {
+    let user: UserData = {
         email: userEmail.value,
         password: userPassword.value
     };
+
+    const body = JSON.stringify(user);
     
     try {
-        const response = await fetch( loginURL,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(user),
-        });
-        
-        checkTokenResponse(response);
-
-        const jsonObj: Token = await response.json();
-        const tokenJson = tokenIs(jsonObj);
-
+        const response = await fetch.makeFetch(loginURL, "POST", false, "application/json", body)     
+        checkTokenResponse(response);    
+        const tokenJson = tokenIs(response);
         saveToken(tokenJson);
         saveTokenReceiptTime();
+        tokenService.assignToken();
         redirect();
 
     } catch (err) {
         let error = err as Error;
         alert(error) 
     } 
-
 }
 
 function redirect() {
@@ -88,7 +78,7 @@ function redirect() {
     }
 }
 
-function saveToken(json: Token) {
+function saveToken(json: Token) { 
     localStorage.setItem (localStorageTokenKey, JSON.stringify(json));
 }
 
@@ -97,8 +87,9 @@ function saveTokenReceiptTime() {
     localStorage.setItem (tokenTimestampKey, JSON.stringify(tokenReceiptTime));
 }
 
-function checkTokenResponse(response: Response) {
-    if (response.ok){
+function checkTokenResponse(response: Token) {
+    if (response.token){
+        
         return response;
     } else {
         let TokenErrorElement = document.getElementById('token-error');
@@ -106,17 +97,17 @@ function checkTokenResponse(response: Response) {
         if (TokenErrorElement) {
             TokenErrorElement.innerHTML = 'Ошибка получения токена. Введите верные логин и пароль.';
         } else {
-            throw new Error(`HTML-элемент не найден. ${response.status} — ${response.statusText}`)
+            throw new Error(`HTML-элемент не найден.`)
         }
     }
 
-    throw new Error(`${response.status} — ${response.statusText}`); 
+    throw new Error(`Ошибка проверки токена`); 
 }
 
 function checkSignUpResponse(response: Response) {
     let messageElement = document.getElementById('token-error');
 
-    if (response.ok){
+    if (response){
 
         if (messageElement) {
             messageElement.innerHTML = 'Пользователь успешно добавлен';
@@ -127,25 +118,25 @@ function checkSignUpResponse(response: Response) {
         return response;
     } 
     
-    if (response.status === 401){
+    // if (response.status === 401){
 
-        if (messageElement) {
-            messageElement.innerHTML = 'Такой пользователь уже существует';
-        } else {
-            throw new Error(`HTML-элемент не найден. ${response.status} — ${response.statusText}`)
-        }
+    //     if (messageElement) {
+    //         messageElement.innerHTML = 'Такой пользователь уже существует';
+    //     } else {
+    //         throw new Error(`HTML-элемент не найден. ${response.status} — ${response.statusText}`)
+    //     }
 
-        return response;
-    } else {
+    //     return response;
+    // } else {
 
-        if (messageElement) {
-            messageElement.innerHTML = 'Что-то пошло не так';
-        } else {
-            throw new Error(`HTML-элемент не найден. ${response.status} — ${response.statusText}`)
-        }
-    }
+    //     if (messageElement) {
+    //         messageElement.innerHTML = 'Что-то пошло не так';
+    //     } else {
+    //         throw new Error(`HTML-элемент не найден. ${response.status} — ${response.statusText}`)
+    //     }
+    // }
 
-    throw new Error(`${response.status} — ${response.statusText}`); 
+    // throw new Error(`${response.status} — ${response.statusText}`); 
 }
 
 function tokenIs (json: Token) {

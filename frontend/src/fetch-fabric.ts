@@ -1,18 +1,27 @@
 import { TokenService } from "./token.service.js";
+import { FetchInit, localStorageTokenKey, Token } from "./url.js";
 
 const tokenService = new TokenService();
 
-export class FetchFabric {
-  private token = tokenService.getToken().token;
+export class FetchFactory {
+  private token = '';
 
-  async makeFetch (url: string, method: string, contentType?: string | undefined, body?: BodyInit | string) {
-    
+  assignToken() {
+    let token = JSON.parse(localStorage.getItem(localStorageTokenKey) || "")
+    this.token = token.token;
+  }
+
+  async makeFetch (url: string, method: string, withToken?: boolean,contentType?: string | undefined, body?: BodyInit | string ) {
     if (method === "GET") {
-      return fetch (url, this.makeGetInit(method, contentType))
+      this.assignToken() 
+      const res = await fetch (url, this.makeGetInit(method, contentType));
+      let result = await res.json();
+
+      return result;
     }
 
     if (method === "POST") {
-      let res = await fetch (url, this.makePostInit(method, body))
+      let res = await fetch (url, this.makePostInit(method, withToken ,body))
       let result = await res.json();
       
       return result;
@@ -27,15 +36,19 @@ export class FetchFabric {
 
   }
 
-  private makePostInit (method: string, body?: BodyInit) {
+  private makePostInit (method: string, withToken: boolean | undefined, body?: BodyInit ) {
     if (body) {
-      return {
+      let init: FetchInit = {
         method,
-        headers: {
-          'Authorization': this.token
-        },
-        body
+        body,
       }
+
+      if (withToken) {
+        init.headers = {
+          'Authorization': this.token
+        }
+      }
+      return init as RequestInit;
     }
     
     throw new Error('Отсутствует тело запроса')
@@ -43,6 +56,7 @@ export class FetchFabric {
 
   private makeGetInit (method: string, contentType?: string) {
     if(contentType) {
+
       return {
         method,
         headers: {

@@ -9,7 +9,7 @@ export interface UserLog {
 }
 
 export interface ResponseObject {
-  objects: object[];
+  objects: string[];
   page: number;
   total: number;
 }
@@ -45,5 +45,5 @@ export interface ImageDB {
   partitionKey: string;
   path: string;
   sortKey: string;
-  resource: string;
+  resType: string;
 }

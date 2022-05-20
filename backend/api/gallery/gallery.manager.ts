@@ -12,17 +12,12 @@ export class GalleryManager {
   }
 
   async getImages(queryParams: QueryParameters, userEmail: string) {
-    const page = queryParams?.page || '1';
-    const limit = queryParams?.limit || '2';
+    const page = +(queryParams?.page || '1');
+    const limit = +(queryParams?.limit || '2');
     const filter = queryParams?.filter || 'false';
     
-    const pageNumber = +page;
-    const limitNumber = +limit;
-
-    let mahagerRes = await this.service.getImages(pageNumber, limitNumber, filter, userEmail);
-    console.log('manager res: ', mahagerRes);
+    let mahagerRes = await this.service.getImages(page, limit, filter, userEmail);
     
-
     return mahagerRes;
   }
 
@@ -35,9 +30,5 @@ export class GalleryManager {
     console.log('result from upload manager: ', result);
   
     return result;
-  }
-  
-  async uploadDefaultImages () {
-    return this.service.uploadDefaultImages();
   }
 }

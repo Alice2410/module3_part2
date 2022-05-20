@@ -17,8 +17,7 @@ export class Metadata {
 
   public getMetadata(e: Event) {
     let res = this.countMetadata(e);
-    console.log('metadata: ', res);
-
+    
     if(res) {
       return res;
     }

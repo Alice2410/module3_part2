@@ -46,7 +46,7 @@ export const galleryTableConfig: AWSPartitial = {
               AttributeType: 'S',
             },
             {
-              AttributeName: 'resource',
+              AttributeName: 'resType',
               AttributeType: 'S',
             },
           ],
@@ -65,7 +65,7 @@ export const galleryTableConfig: AWSPartitial = {
               IndexName: 'ImagesIndex',
               KeySchema: [
                 {
-                  AttributeName: 'resource',
+                  AttributeName: 'resType',
                   KeyType: 'HASH',
                 },
                 {

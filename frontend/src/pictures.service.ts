@@ -1,34 +1,27 @@
 import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKey, ImageObject } from "./url.js";
 import { TokenService } from "./token.service.js";
 import { ErrorService } from "./error.service.js";
-import { FetchFabric } from "./fetch-fabric.js";
+import { FetchFactory } from "./fetch-fabric.js";
 
 const tokenService = new TokenService();
 const errorService = new ErrorService();
-const fetch = new FetchFabric();
+const fetch = new FetchFactory();
 
 const uploadFile = document.getElementById("file") as HTMLInputElement;
 const formData = new FormData();
 
 export class GalleryService {
 
-  async goToNewGalleryPage() {  //fetch на получение
+  async goToNewGalleryPage() {  
     let requestGalleryURL = basicGalleryURL + window.location.search;
     
     try {
-        const response = await fetch.makeFetch(requestGalleryURL, "GET", "application/json");
-        // let responseGalleryObj = await response.clone().json();
-        // console.log(responseGalleryObj);
-        
+        const response: Gallery = await fetch.makeFetch(requestGalleryURL, "GET", true, "application/json");
+
         if (response) {
-
-          this.checkResponse(response);
-          let responseObj: Gallery = await response.json();
-          console.log(responseObj);
-          
-          this.createLinks(responseObj);
-          this.createImages(responseObj);
-
+          this.checkResponse(response); 
+          this.createLinks(response);
+          this.createImages(response);
         } else {
           throw new Error('нет ответа от fetch')
         }
@@ -38,25 +31,14 @@ export class GalleryService {
     }
   }
 
-  checkResponse (response: Response) {
-    if (response.ok) {
+  checkResponse (response: Gallery) {
+    if (response) {
       console.log('response is ok');
       
-        return response;
+      return response;
     } 
 
-    let errorMessage: string;
-
-    if (response.status === 401) {
-        errorMessage = "Токен некорректен или отсутствует. Повторите авторизацию."
-        errorService.writeErrorMessage (errorMessage, response);
-    } else if (response.status === 404) {
-        errorMessage = "Такой страницы не существует."
-        errorService.writeErrorMessage (errorMessage, response);
-    }
-
-    throw new Error(`${response.status} — ${response.body}`);
-    
+    throw new Error(response);
   }
 
   createLinks(imagesObject: Gallery){
@@ -74,8 +56,6 @@ export class GalleryService {
 
   createImages(imagesObject: Gallery) {
     let imagesPathsArr = imagesObject.objects;
-    console.log('paths: ', imagesPathsArr);
-  
     let imageSection = document.getElementById("photo-section");
 
     for (const imgPath of imagesPathsArr) {
@@ -88,20 +68,17 @@ export class GalleryService {
   public async uploadImage(data: object, image: Blob) { //fetch на отправку
     let postUrl = basicGalleryURL + '/upload-new';
     let body = JSON.stringify(data);
-    console.log('body from upload: ' + JSON.stringify(data));
-    
+ 
     if (uploadFile.files) {
-
         for (const file of uploadFile.files) {
             formData.append("file", file);
         }
     }
     
     try {
-        const response = await fetch.makeFetch(postUrl, "POST", undefined, body);
-
+        const response = await fetch.makeFetch(postUrl, "POST", true ,undefined, body);
         if(response) {
-          const uploadRes = await fetch.makeFetch(response, "PUT", undefined, image);
+          const uploadRes = await fetch.makeFetch(response, "PUT", true, undefined, image);
           if (uploadRes.status === 200) {
             console.log('Картинка загружена');
           }
@@ -109,8 +86,7 @@ export class GalleryService {
         
         let currentPage = window.location;
         let searchParam = currentPage.search;
-        console.log(response);
-        // window.location.href = "gallery.html" + searchParam;
+        window.location.href = "gallery.html" + searchParam;
     } catch(error) {
         let err = error as Error;
         console.log(err);

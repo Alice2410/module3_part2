@@ -10,17 +10,20 @@ import {
 export class ImageDBService {
   private readonly dynamoDBService = new DynamoDBService();
   private readonly tableName = getEnv('TABLE_NAME');
+  private readonly indexName = getEnv('INDEX_NAME');
   private readonly imagePrefix = getEnv('IMAGE_TAG');
+
 
   async getImages(email: string, filter: string) {
     console.log('in getImages');
 
     try {
       console.log(email, filter);
+      let params;
 
-      // if (filter === 'true') {
+      if (filter === 'true') {
 
-        const params = {
+        params = {
           tableName: this.tableName,
           keyCondition: 'partitionKey = :e AND begins_with(sortKey , :ip)',
           attributeValues: {
@@ -28,10 +31,24 @@ export class ImageDBService {
             ':ip': `${this.imagePrefix}`
           },
         }
-        const images = this.dynamoDBService.query(params.tableName, params.attributeValues, params.keyCondition)
-          
-        return images;
-      // }
+
+        // const images = this.dynamoDBService.query(/*params.tableName, params.attributeValues, params.keyCondition*/params)
+      } else {
+        params = {
+          tableName: this.tableName,
+          indexName: this.indexName,
+          keyCondition: 'resType = :e',
+          attributeValues: {
+            ':e': 'image',
+          },
+        }
+      }
+
+      
+      const images = this.dynamoDBService.query(params)
+
+      return images;
+
       
     } catch(e) {
       if (e instanceof HttpBadRequestError){
@@ -73,7 +90,7 @@ export class ImageDBService {
       const attributes = {
         path: metadata.name,
         metadata: metadata,
-        resource: 'image'
+        resType: 'image'
       }
       const newImage = this.dynamoDBService.putItem(email, `${this.imagePrefix}#${email}#${metadata.name}`, this.tableName, attributes);
       console.log('new image: ', newImage);

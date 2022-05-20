@@ -33,18 +33,3 @@ export const addImageGallery = {
     },
   ],
 };
-
-export const uploadDefaultImages = {
-  handler: 'api/gallery/handler.uploadDefaultImages',
-    description: 'Create default images objects in DB',
-    timeout: 6,
-    memorySize: 128,
-    events: [
-    {
-      httpApi: {
-        path: '/gallery/upload-default',
-        method: 'post',
-      },
-    },
-  ],
-};

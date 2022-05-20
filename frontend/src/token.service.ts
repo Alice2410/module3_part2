@@ -1,7 +1,12 @@
 import { Token, basicGalleryURL, Gallery, tokenTimestampKey, localStorageTokenKey, ImageObject } from "./url.js";
 
 export class TokenService {
-  private tokenObject: Token = JSON.parse(localStorage.getItem(localStorageTokenKey) || '');
+  private tokenObject: Token | undefined = undefined;
+
+  assignToken() {
+    let token = JSON.parse(localStorage.getItem(localStorageTokenKey) || "");
+    this.tokenObject = token;
+  }
 
   checkTokenIs() {
     if ((Date.now() - JSON.parse(localStorage.getItem(tokenTimestampKey) || "")) >= 600000) {
@@ -15,8 +20,9 @@ export class TokenService {
   }
 
   checkLocalStorage () {
-    if (localStorage.getItem(localStorageTokenKey)) {
-      this.tokenObject = JSON.parse(localStorage.getItem(localStorageTokenKey) || '');
+    let token = localStorage.getItem(localStorageTokenKey)
+    if (token) {
+      this.tokenObject = JSON.parse(token);
     } else {
          this.redirectToAuthorization()
      }
@@ -30,6 +36,7 @@ export class TokenService {
 
   getToken() {
     if (this.tokenObject) {
+
       return this.tokenObject;
     }
 
