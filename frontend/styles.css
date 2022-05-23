@@ -156,3 +156,44 @@ a {
 .show-images:active {
     background-color: #cabeb1;
 }
+
+.input {
+    background: #ebe3d5;
+    width: 200px;
+    min-height: 30px;
+    align-items: center;
+    color: #6e544b;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: 2px solid #cfc4b2;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.input-submit {
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 0;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    background: #f3e7d3;
+    border: 2px solid #d6c19b;
+    color: #6e544b;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.input:focus-visible{
+    outline: 2px solid #c9933e;
+    outline-offset: -2px;
+}
+
+.forms-section {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.form {
+    width: 300px;
+}

@@ -21,16 +21,19 @@
             </ul>
             <button class="show-images" id="filter-button">Показать мои картинки</button>
         </section>
-        <section class="photos" id="photo-section">
-        </section>
         <p id="error-message"></p>
         <a href="http://localhost:5000/" id="back-gallery" class="back-link back-link--disabled">Go to authorization page</a>
-        <section class="upload-section">
-            <!-- <form action="/gallery" method="POST" enctype="multipart/form-data"></form>> -->
-            <form id="upload">
-                <input type="file" name="file" id="file" multiple>
-                <input type="submit" name="upload" value="upload">
+        <section class="forms-section">
+            <form class="form" id="find-by-keyword">
+                <input class="input" type="text" name="keyword" id="keyword">
+                <input class="input-submit" type="submit" name="upload" value="search">
             </form>
+            <form class="form" id="upload">
+                <input class="input" type="file" name="file" id="file" multiple>
+                <input class="input-submit" type="submit" name="upload" value="upload">
+            </form>
+        </section>
+        <section class="photos" id="photo-section">
         </section>
     </main>
     <footer>
