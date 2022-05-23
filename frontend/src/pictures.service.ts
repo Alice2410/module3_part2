@@ -66,7 +66,7 @@ export class GalleryService {
   }
 
   public async uploadImage(data: object, image: Blob) { //fetch на отправку
-    let postUrl = basicGalleryURL + '/upload-new';
+    let postUrl = basicGalleryURL + '/get-upload-link';
     let body = JSON.stringify(data);
  
     if (uploadFile.files) {

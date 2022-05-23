@@ -1,6 +1,6 @@
 import { AWSPartitial } from '../../types';
-import { getGallery, addImageGallery} from './index';
+import { getGallery, getUploadLink} from './index';
 
 export const galleryConfig: AWSPartitial = {
-  functions: { getGallery, addImageGallery }
+  functions: { getGallery, getUploadLink }
 }

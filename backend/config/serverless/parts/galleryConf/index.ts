@@ -16,15 +16,15 @@ export const getGallery =  {
   ],
 };
 
-export const addImageGallery = {
-  handler: 'api/gallery/handler.addImageGallery',
+export const getUploadLink = {
+  handler: 'api/gallery/handler.getUploadLink',
     description: 'Upload new images',
     timeout: 6,
     memorySize: 128,
     events: [
     {
       httpApi: {
-        path: '/gallery/upload-new',
+        path: '/gallery/get-upload-link',
         method: 'post',
         authorizer: {
           name: 'authenticate'

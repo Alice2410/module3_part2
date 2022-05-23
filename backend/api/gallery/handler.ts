@@ -48,7 +48,7 @@ export const getGallery: APIGatewayProxyHandler = async (event, context) => {
   }
 };
 
-export const addImageGallery: APIGatewayProxyHandler = async (event) => {
+export const getUploadLink: APIGatewayProxyHandler = async (event) => {
   try {
     console.log('in handler, event: ', event);
     const manager = new GalleryManager();

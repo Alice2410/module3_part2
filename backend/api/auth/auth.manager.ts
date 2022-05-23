@@ -13,8 +13,7 @@ export class AuthorizationManager {
   }
 
   validateUserData(userData: string, validate: boolean) {
-    console.log('in validate');
-    
+    console.log('in validate user data');
     const userObject: UserData = JSON.parse(userData);
 
     if(validate) {

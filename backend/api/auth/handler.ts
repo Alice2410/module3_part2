@@ -6,7 +6,6 @@ import {
 } from "aws-lambda";
 import { AuthorizationManager } from './auth.manager';
 import { jwtToken } from './auth.interface';
-import { log } from 'helper/logger';
 import { 
   HttpUnauthorizedError,
 } from '@floteam/errors';
@@ -15,14 +14,11 @@ import { APIGatewayAuthorizerSimpleResult, APIGatewayRequestAuthorizerHttpApiPay
 const manager = new AuthorizationManager();
 
 export const signUp: APIGatewayProxyHandlerV2 = async(event) => {
-  console.log(event);
-
   try { 
     if (!event.body) {
       throw new HttpUnauthorizedError('Нет пользовательских данных')
     } 
-    console.log('ev b ', event.body);
-    
+    console.log('sign Up event body: ', event.body);
     const response = await manager.signUp(event.body);
 
     return createResponse(200, response);
@@ -47,11 +43,7 @@ export const logIn: APIGatewayProxyHandlerV2 = async (event) => {
 }
 
 export const uploadDefaultUsers: APIGatewayProxyHandlerV2 = async () => {
-  console.log('upload');
-  
-
   try {
-    // const manager = new AuthorizationManager();
     const response = await manager.uploadDefaultUsers();
 
     return createResponse(200, response);
@@ -83,10 +75,7 @@ export const authenticate: Handler<
   try {
     const manager = new AuthorizationManager();
     const token = event.identitySource?.[0]
-
-    console.log('token', token);
     const user = await manager.authenticate(token!) as jwtToken;
-    console.log('user from auth: ', user);
     const response = {
       isAuthorized: true,
       context: {
@@ -94,16 +83,12 @@ export const authenticate: Handler<
       }
     };
 
-    console.log('auth handler resp: ', response);
     return response;
-    
   } catch (err) {
     
-    const response = {
+    return {
       isAuthorized: false,
     };
-
-    return response;
   }
 
 }
